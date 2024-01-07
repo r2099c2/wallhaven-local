@@ -1,6 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use rand::Rng;
+
 /**
  * 获取壁纸数据
  */
@@ -14,19 +16,28 @@ fn get_wallpaper_data() -> Result<String, String> {
 /**
  * 将原始数据转换为图片列表
  */
-fn convert_to_image_list(data: String) -> Result<String, String> {
+fn convert_to_image_list(data: String) -> Vec<String> {
     let json: serde_json::Value = serde_json::from_str(&data).unwrap();
     let mut image_list: Vec<String> = Vec::new();
-    let mut image_list_str = String::new();
     for item in json["data"].as_array().unwrap() {
         let image_url = item["path"].as_str().unwrap();
         image_list.push(image_url.to_string());
     }
-    for item in image_list {
-        image_list_str.push_str(&item);
-        image_list_str.push_str("\n");
+    image_list
+}
+
+/**
+ * 获取随机 5 张壁纸
+ */
+fn get_random_images(image_list: Vec<String>) -> Vec<String> {
+    let mut rng = rand::thread_rng();
+    let mut random_images: Vec<String> = Vec::new();
+    for _ in 0..5 {
+        let random_index = rng.gen_range(0..image_list.len());
+        let random_image = image_list[random_index].clone();
+        random_images.push(random_image);
     }
-    Ok(image_list_str)
+    random_images
 }
 
 /**
@@ -35,12 +46,8 @@ fn convert_to_image_list(data: String) -> Result<String, String> {
 #[tauri::command]
 fn get_data() -> Vec<String> {
     let data = get_wallpaper_data().unwrap();
-    let image_list = convert_to_image_list(data).unwrap();
-    let mut image_list_vec: Vec<String> = Vec::new();
-    for item in image_list.split("\n") {
-        image_list_vec.push(item.to_string());
-    }
-    image_list_vec
+    let image_list = convert_to_image_list(data);
+    get_random_images(image_list)
 }
 
 fn main() {

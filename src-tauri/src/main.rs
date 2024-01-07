@@ -2,12 +2,40 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use rand::Rng;
+use serde::{Deserialize, Serialize};
+
+/**
+ * wallhaven 参数
+ */
+#[derive(Deserialize, Serialize)]
+struct WallhavenParams {
+    sorting: String,
+    order: String,
+    seed: i32,
+    page: i32,
+    categories: String,
+    purity: i32,
+    atleast: String,
+    ratios: String,
+}
 
 /**
  * 获取壁纸数据
  */
 fn get_wallpaper_data() -> Result<String, String> {
-    let url = "https://wallhaven.cc/api/v1/search?sorting=random&order=desc&seed=1&page=1&categories=111&purity=100&atleast=1920x1080&ratios=16x9&colors=000000";
+    let q = WallhavenParams {
+        sorting: "toplist".to_string(),
+        order: "desc".to_string(),
+        seed: 1,
+        page: 1,
+        categories: "111".to_string(),
+        purity: 100,
+        atleast: "1920x1080".to_string(),
+        ratios: "16x9".to_string(),
+    };
+
+    let url = "https://wallhaven.cc/api/v1/search?".to_owned()
+        + serde_qs::to_string(&q).unwrap().as_str();
     let resp = reqwest::blocking::get(url).unwrap();
     let body = resp.text().unwrap();
     Ok(body)

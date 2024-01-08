@@ -70,6 +70,7 @@ fn get_random_images(image_list: Vec<String>) -> Vec<String> {
 
 /**
  * 返回数据到前端
+ * Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
  */
 #[tauri::command]
 fn get_data() -> Vec<String> {
@@ -78,9 +79,28 @@ fn get_data() -> Vec<String> {
     get_random_images(image_list)
 }
 
+/**
+ * 获取图片 URL 为入参，并设置为 windows 的壁纸
+ */
+#[tauri::command]
+fn set_wallpaper(image_url: String) {
+    println!("url: {}", image_url);
+    let resp = reqwest::blocking::get(image_url).unwrap();
+    let body = resp.bytes().unwrap();
+    let mut file = std::fs::File::create("wallpaper.jpg").unwrap();
+    std::io::copy(&mut body.as_ref(), &mut file).unwrap();
+    let path = std::path::Path::new("wallpaper.jpg");
+    println!("path: {:?}", path);
+    let result = wallpaper::set_from_path(path.to_str().unwrap());
+    match result {
+        Ok(_) => println!("set wallpaper success"),
+        Err(_) => println!("set wallpaper failed"),
+    }
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_data])
+        .invoke_handler(tauri::generate_handler![get_data, set_wallpaper])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

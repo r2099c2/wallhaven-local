@@ -11,6 +11,10 @@ function App() {
     setImgs(res);
   };
 
+  const setBgImg = (imageUrl: string) => {
+    invoke('set_wallpaper', { imageUrl });
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -19,7 +23,7 @@ function App() {
     <div className="container">
       <div className="row">
         {imgs?.map((img, i) => (
-          <div key={i} className="cell">
+          <div key={i} className="cell" onClick={() => setBgImg(img)}>
             <img src={img} alt="" className="item" />
           </div>
         ))}

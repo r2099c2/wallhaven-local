@@ -17,6 +17,7 @@ struct WallhavenParams {
     purity: i32,
     atleast: String,
     ratios: String,
+    topRange: String,
 }
 
 /**
@@ -30,6 +31,7 @@ fn get_wallpaper_data() -> Result<String, String> {
         page: 1,
         categories: "111".to_string(),
         purity: 100,
+        topRange: "3d".to_owned(),
         atleast: "1920x1080".to_string(),
         ratios: "16x9".to_string(),
     };

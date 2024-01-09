@@ -1,8 +1,15 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use lazy_static::lazy_static;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+use std::sync::{Arc, Mutex};
+
+// 文件夹位置的变量
+lazy_static! {
+    static ref DIRECTORY: Arc<Mutex<String>> = Arc::new(Mutex::new(String::new()));
+}
 
 /**
  * wallhaven 参数
@@ -90,9 +97,15 @@ fn set_wallpaper(image_url: String) {
     println!("url: {}", image_url);
     let resp = reqwest::blocking::get(image_url).unwrap();
     let body = resp.bytes().unwrap();
-    let mut file = std::fs::File::create("wallpaper.jpg").unwrap();
+
+    // 在 DIRECTORY 目录下保存图片
+    let dir = DIRECTORY.lock().unwrap();
+    let filename = format!("{}/wallpaper.jpg", *dir);
+    let filename_clone = filename.clone(); // Clone the filename
+    let mut file = std::fs::File::create(filename_clone).unwrap();
     std::io::copy(&mut body.as_ref(), &mut file).unwrap();
-    let path = std::path::Path::new("wallpaper.jpg");
+
+    let path = std::path::Path::new(&filename);
     println!("path: {:?}", path);
     let result = wallpaper::set_from_path(path.to_str().unwrap());
     match result {
@@ -106,7 +119,8 @@ fn set_wallpaper(image_url: String) {
  */
 #[tauri::command]
 fn set_directory(directory: String) {
-    println!("dir: {}", directory);
+    let mut dir = DIRECTORY.lock().unwrap();
+    *dir = directory;
 }
 
 fn main() {

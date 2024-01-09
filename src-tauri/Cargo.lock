@@ -3671,6 +3671,7 @@ dependencies = [
 name = "wallhaven-local"
 version = "0.0.0"
 dependencies = [
+ "lazy_static",
  "rand 0.8.5",
  "reqwest",
  "serde",

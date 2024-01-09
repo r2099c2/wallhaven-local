@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
  * wallhaven 参数
  */
 #[derive(Deserialize, Serialize)]
+#[allow(non_snake_case)]
 struct WallhavenParams {
     sorting: String,
     order: String,
@@ -100,9 +101,21 @@ fn set_wallpaper(image_url: String) {
     }
 }
 
+/**
+ * 接收前端传递的文件夹位置，作为壁纸存储位置
+ */
+#[tauri::command]
+fn set_directory(directory: String) {
+    println!("dir: {}", directory);
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_data, set_wallpaper])
+        .invoke_handler(tauri::generate_handler![
+            get_data,
+            set_wallpaper,
+            set_directory
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

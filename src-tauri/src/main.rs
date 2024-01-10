@@ -95,12 +95,14 @@ fn get_data() -> Vec<String> {
 #[tauri::command]
 fn set_wallpaper(image_url: String) {
     println!("url: {}", image_url);
-    let resp = reqwest::blocking::get(image_url).unwrap();
+    let resp = reqwest::blocking::get(image_url.clone()).unwrap();
     let body = resp.bytes().unwrap();
 
     // 在 DIRECTORY 目录下保存图片
     let dir = DIRECTORY.lock().unwrap();
-    let filename = format!("{}/wallpaper.jpg", *dir);
+    // 使用 image_url 最后一段作为文件名
+    let image_name = image_url.split("/").last().unwrap();
+    let filename = format!("{}/{}.jpg", *dir, image_name);
     let filename_clone = filename.clone(); // Clone the filename
     let mut file = std::fs::File::create(filename_clone).unwrap();
     std::io::copy(&mut body.as_ref(), &mut file).unwrap();

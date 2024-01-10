@@ -49,7 +49,7 @@ function App() {
       <div className="row">
         {imgs?.map((img, i) => (
           <div key={i} className="cell" onClick={() => setBgImg(img)}>
-            <img src={img} alt="" className="item" />
+            <img src={img} alt="img" className="item" />
           </div>
         ))}
       </div>

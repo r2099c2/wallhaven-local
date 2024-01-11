@@ -102,13 +102,12 @@ fn set_wallpaper(image_url: String) {
     let dir = DIRECTORY.lock().unwrap();
     // 使用 image_url 最后一段作为文件名
     let image_name = image_url.split("/").last().unwrap();
-    let filename = format!("{}/{}.jpg", *dir, image_name);
+    let filename = format!("{}/{}", *dir, image_name);
     let filename_clone = filename.clone(); // Clone the filename
     let mut file = std::fs::File::create(filename_clone).unwrap();
     std::io::copy(&mut body.as_ref(), &mut file).unwrap();
 
     let path = std::path::Path::new(&filename);
-    println!("path: {:?}", path);
     let result = wallpaper::set_from_path(path.to_str().unwrap());
     match result {
         Ok(_) => println!("set wallpaper success"),

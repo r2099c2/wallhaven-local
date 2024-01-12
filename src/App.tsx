@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { dialog } from '@tauri-apps/api';
+import { message } from 'antd';
 import './App.css';
 
 function App() {
@@ -13,8 +14,11 @@ function App() {
     setImgs(res);
   };
 
-  const setBgImg = (imageUrl: string) => {
-    invoke('set_wallpaper', { imageUrl });
+  const setBgImg = async (imageUrl: string) => {
+    message.loading('设置中...', 10);
+    await invoke('set_wallpaper', { imageUrl });
+    message.destroy();
+    message.info('设置成功');
   };
 
   useEffect(() => {

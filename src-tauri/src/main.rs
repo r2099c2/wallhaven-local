@@ -93,7 +93,7 @@ fn get_data() -> Vec<String> {
  * 获取图片 URL 为入参，并设置为 windows 的壁纸
  */
 #[tauri::command]
-fn set_wallpaper(image_url: String) {
+fn set_wallpaper(image_url: String) -> bool {
     println!("url: {}", image_url);
     let resp = reqwest::blocking::get(image_url.clone()).unwrap();
     let body = resp.bytes().unwrap();
@@ -110,8 +110,14 @@ fn set_wallpaper(image_url: String) {
     let path = std::path::Path::new(&filename);
     let result = wallpaper::set_from_path(path.to_str().unwrap());
     match result {
-        Ok(_) => println!("set wallpaper success"),
-        Err(_) => println!("set wallpaper failed"),
+        Ok(_) => {
+            println!("set wallpaper success");
+            true
+        }
+        Err(_) => {
+            println!("set wallpaper failed");
+            false
+        }
     }
 }
 

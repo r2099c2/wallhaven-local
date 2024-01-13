@@ -93,6 +93,10 @@ fn get_data() -> Vec<String> {
 }
 
 /**
+ * 从文件夹中获取数据
+ */
+
+/**
  * 获取图片 URL 为入参，并设置为 windows 的壁纸
  */
 #[tauri::command]

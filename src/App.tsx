@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+import { convertFileSrc, invoke } from '@tauri-apps/api/tauri';
 import { dialog } from '@tauri-apps/api';
 import { message, Button } from 'antd';
 import './App.css';
+import { BaseDirectory, readDir } from '@tauri-apps/api/fs';
 
 function App() {
   const [imgs, setImgs] = useState<string[]>();
+  const [localImgs, setLocalImgs] = useState<string[]>();
   const [directory, setDirectory] = useState<string>('');
 
   const fetchData = async () => {
@@ -26,16 +28,26 @@ function App() {
       if (res) {
         setDirectory(res);
         // 从文件夹中遍历图片文件
-        loadCurrentImages();
+        loadCurrentImages(res);
       }
     });
   }, []);
 
   // 从文件夹中遍历图片文件
-  const loadCurrentImages = async () => {
-    const res = await invoke<Array<string>>('get_data');
-    console.log(res);
-    setImgs(res);
+  const loadCurrentImages = async (directory: string) => {
+    if (!directory) {
+      return;
+    }
+
+    readDir('wallpaper', { dir: BaseDirectory.Picture }).then((res) => {
+      const imgs = res
+        .filter(
+          (item) => item.name?.endsWith('.jpg') || item.name?.endsWith('.png')
+        )
+        .map((item) => convertFileSrc(item.path));
+      console.log(imgs);
+      setLocalImgs(imgs);
+    });
   };
 
   // 选择文件夹并将文件夹路径传给rust
@@ -63,6 +75,11 @@ function App() {
         {/* 选择文件夹 */}
         <button onClick={selectDirectory}>选择文件夹</button>
         <p>当前选择的文件夹：{directory}</p>
+      </div>
+      <div className="row">
+        {localImgs?.map((img, i) => (
+          <img src={img} alt="img" className="item" key={i} />
+        ))}
       </div>
       <div className="row">
         {imgs?.map((img, i) => (

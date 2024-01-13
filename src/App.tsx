@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 import { dialog } from '@tauri-apps/api';
-import { message } from 'antd';
+import { message, Button } from 'antd';
 import './App.css';
 
 function App() {
@@ -10,7 +10,6 @@ function App() {
 
   const fetchData = async () => {
     const res = await invoke<Array<string>>('get_data');
-    console.log(res);
     setImgs(res);
   };
 
@@ -26,9 +25,18 @@ function App() {
     invoke<string>('get_directory').then((res) => {
       if (res) {
         setDirectory(res);
+        // 从文件夹中遍历图片文件
+        loadCurrentImages();
       }
     });
   }, []);
+
+  // 从文件夹中遍历图片文件
+  const loadCurrentImages = async () => {
+    const res = await invoke<Array<string>>('get_data');
+    console.log(res);
+    setImgs(res);
+  };
 
   // 选择文件夹并将文件夹路径传给rust
   const selectDirectory = async () => {
@@ -63,6 +71,8 @@ function App() {
           </div>
         ))}
       </div>
+
+      <Button onClick={fetchData}>获取数据</Button>
     </div>
   );
 }

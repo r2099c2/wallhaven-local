@@ -22,7 +22,12 @@ function App() {
   };
 
   useEffect(() => {
-    fetchData();
+    // 从本地获取缓存的文件夹路径
+    invoke<string>('get_directory').then((res) => {
+      if (res) {
+        setDirectory(res);
+      }
+    });
   }, []);
 
   // 选择文件夹并将文件夹路径传给rust
@@ -38,6 +43,7 @@ function App() {
         directory = path;
       }
       setDirectory(directory);
+      // 将文件地址存储到本地文件
       invoke('set_directory', { directory: path });
     }
   };

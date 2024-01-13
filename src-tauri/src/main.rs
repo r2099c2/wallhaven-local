@@ -4,7 +4,10 @@
 use lazy_static::lazy_static;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use std::sync::{Arc, Mutex};
+use std::{
+    io::{Read, Write},
+    sync::{Arc, Mutex},
+};
 
 // 文件夹位置的变量
 lazy_static! {
@@ -128,6 +131,36 @@ fn set_wallpaper(image_url: String) -> bool {
 fn set_directory(directory: String) {
     let mut dir = DIRECTORY.lock().unwrap();
     *dir = directory;
+
+    // 位置存储到本地缓存
+    let mut file = match std::fs::File::create("directory.txt") {
+        Ok(file) => file,
+        Err(_) => panic!("create file failed"),
+    };
+
+    match file.write_all(dir.as_bytes()) {
+        Ok(_) => println!("write file success"),
+        Err(_) => println!("write file failed"),
+    }
+}
+
+/**
+ * 获取文件夹位置
+ */
+#[tauri::command]
+fn get_directory() -> String {
+    let mut file = match std::fs::File::open("directory.txt") {
+        Ok(file) => file,
+        Err(_) => panic!("open file failed"),
+    };
+
+    let mut dir = String::new();
+    match file.read_to_string(&mut dir) {
+        Ok(_) => println!("read file success"),
+        Err(_) => println!("read file failed"),
+    }
+
+    dir
 }
 
 fn main() {
@@ -135,7 +168,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             get_data,
             set_wallpaper,
-            set_directory
+            set_directory,
+            get_directory
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

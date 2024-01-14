@@ -15,11 +15,26 @@ function App() {
     setImgs(res);
   };
 
-  const setBgImg = async (imageUrl: string) => {
+  const setBgImg = async (filePath: string) => {
     message.loading('设置中...', 10);
-    await invoke('set_wallpaper', { imageUrl });
+    const res = await invoke('set_wallpaper', { filePath });
     message.destroy();
-    message.info('设置成功');
+    if (res) {
+      message.info('设置成功');
+    } else {
+      message.error('设置失败');
+    }
+  };
+
+  const loadAndSetWallpaper = async (imageUrl: string) => {
+    message.loading('设置中...', 0);
+    const res = await invoke('load_and_set_wallpaper', { imageUrl });
+    message.destroy();
+    if (res) {
+      message.info('设置成功');
+    } else {
+      message.error('设置失败');
+    }
   };
 
   useEffect(() => {
@@ -45,7 +60,6 @@ function App() {
           (item) => item.name?.endsWith('.jpg') || item.name?.endsWith('.png')
         )
         .map((item) => convertFileSrc(item.path));
-      console.log(imgs);
       setLocalImgs(imgs);
     });
   };
@@ -78,12 +92,22 @@ function App() {
       </div>
       <div className="row">
         {localImgs?.map((img, i) => (
-          <img src={img} alt="img" className="item" key={i} />
+          <img
+            src={img}
+            alt="img"
+            className="item"
+            key={i}
+            onClick={() => setBgImg(img)}
+          />
         ))}
       </div>
       <div className="row">
         {imgs?.map((img, i) => (
-          <div key={i} className="cell" onClick={() => setBgImg(img)}>
+          <div
+            key={i}
+            className="cell"
+            onClick={() => loadAndSetWallpaper(img)}
+          >
             <img src={img} alt="img" className="item" />
           </div>
         ))}

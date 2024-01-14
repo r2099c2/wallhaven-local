@@ -100,7 +100,7 @@ fn get_data() -> Vec<String> {
  * 获取图片 URL 为入参，并设置为 windows 的壁纸
  */
 #[tauri::command]
-fn set_wallpaper(image_url: String) -> bool {
+fn load_and_set_wallpaper(image_url: String) -> bool {
     println!("url: {}", image_url);
     let resp = reqwest::blocking::get(image_url.clone()).unwrap();
     let body = resp.bytes().unwrap();
@@ -114,8 +114,17 @@ fn set_wallpaper(image_url: String) -> bool {
     let mut file = std::fs::File::create(filename_clone).unwrap();
     std::io::copy(&mut body.as_ref(), &mut file).unwrap();
 
-    let path = std::path::Path::new(&filename);
+    set_wallpaper(filename)
+}
+
+/**
+ * 设置为壁纸
+ */
+#[tauri::command]
+fn set_wallpaper(file_path: String) -> bool {
+    let path = std::path::Path::new(&file_path);
     let result = wallpaper::set_from_path(path.to_str().unwrap());
+
     match result {
         Ok(_) => {
             println!("set wallpaper success");
@@ -171,6 +180,7 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             get_data,
+            load_and_set_wallpaper,
             set_wallpaper,
             set_directory,
             get_directory

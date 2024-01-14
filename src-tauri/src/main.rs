@@ -8,7 +8,6 @@ use std::{
     io::{Read, Write},
     sync::{Arc, Mutex},
 };
-use tauri::api::path;
 
 // 文件夹位置的变量
 lazy_static! {
@@ -88,7 +87,7 @@ fn convert_to_image_list(data: String) -> Vec<ImageData> {
 }
 
 /**
- * 获取随机 5 张壁纸
+ * 获取随机 5 张不重复的壁纸
  */
 fn get_random_images(image_list: Vec<ImageData>) -> Vec<ImageData> {
     let mut rng = rand::thread_rng();
@@ -130,9 +129,11 @@ fn load_and_set_wallpaper(image_url: String) -> bool {
     // 在 DIRECTORY 目录下保存图片
     let dir = DIRECTORY.lock().unwrap();
     // 使用 image_url 最后一段作为文件名
+    println!("dir: {}", *dir);
     let image_name = image_url.split("/").last().unwrap();
     let filename = format!("{}/{}", *dir, image_name);
     let filename_clone = filename.clone(); // Clone the filename
+    println!("filename: {}", filename_clone);
     let mut file = std::fs::File::create(filename_clone).unwrap();
     std::io::copy(&mut body.as_ref(), &mut file).unwrap();
 
@@ -194,6 +195,10 @@ fn get_directory() -> String {
         Ok(_) => println!("read file success"),
         Err(_) => println!("read file failed"),
     }
+
+    // 放到全局变量中
+    let mut dir_global = DIRECTORY.lock().unwrap();
+    *dir_global = dir.clone();
 
     dir
 }

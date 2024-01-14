@@ -91,16 +91,18 @@ function App() {
         <p>当前选择的文件夹：{directory}</p>
       </div>
       <h2>网络图片（点击下载并设置）：</h2>
-      <Button onClick={fetchData}>下载新的照片</Button>
-      <div className="row">
+      <Button className="download-btn" onClick={fetchData}>
+        下载新的照片
+      </Button>
+      <div className="net-row">
         {imgs?.map((img, i) => (
-          <div
+          <img
+            src={img}
+            alt="img"
             key={i}
-            className="cell"
+            className="net-img"
             onClick={() => loadAndSetWallpaper(img)}
-          >
-            <img src={img} alt="img" className="item" />
-          </div>
+          />
         ))}
       </div>
       <h2>本地文件：</h2>

@@ -5,13 +5,18 @@ import { message, Button } from 'antd';
 import './App.css';
 import { BaseDirectory, readDir } from '@tauri-apps/api/fs';
 
+interface ImageData {
+  path: string;
+  thumb: string;
+}
+
 function App() {
-  const [imgs, setImgs] = useState<string[]>();
+  const [imgs, setImgs] = useState<ImageData[]>();
   const [localImgs, setLocalImgs] = useState<string[]>();
   const [directory, setDirectory] = useState<string>('');
 
   const fetchData = async () => {
-    const res = await invoke<Array<string>>('get_data');
+    const res = await invoke<Array<ImageData>>('get_data');
     setImgs(res);
   };
 
@@ -97,11 +102,11 @@ function App() {
       <div className="net-row">
         {imgs?.map((img, i) => (
           <img
-            src={img}
+            src={img.thumb}
             alt="img"
             key={i}
             className="net-img"
-            onClick={() => loadAndSetWallpaper(img)}
+            onClick={() => loadAndSetWallpaper(img.path)}
           />
         ))}
       </div>

@@ -8,6 +8,7 @@ use std::{
     io::{Read, Write},
     sync::{Arc, Mutex},
 };
+use tauri::api::path;
 
 // 文件夹位置的变量
 lazy_static! {
@@ -55,14 +56,33 @@ fn get_wallpaper_data() -> Result<String, String> {
 }
 
 /**
+ * 返回前端的图片数据格式
+ */
+#[derive(Deserialize, Serialize, Debug, Clone)]
+struct ImageData {
+    /**
+     * 路径
+     */
+    path: String,
+    /**
+     * 缩略图
+     */
+    thumb: String,
+}
+
+/**
  * 将原始数据转换为图片列表
  */
-fn convert_to_image_list(data: String) -> Vec<String> {
+fn convert_to_image_list(data: String) -> Vec<ImageData> {
     let json: serde_json::Value = serde_json::from_str(&data).unwrap();
-    let mut image_list: Vec<String> = Vec::new();
+    let mut image_list: Vec<ImageData> = Vec::new();
     for item in json["data"].as_array().unwrap() {
         let image_url = item["path"].as_str().unwrap();
-        image_list.push(image_url.to_string());
+        let thumb_url = item["thumbs"]["large"].as_str().unwrap();
+        image_list.push(ImageData {
+            path: image_url.to_owned(),
+            thumb: thumb_url.to_owned(),
+        });
     }
     image_list
 }
@@ -70,14 +90,16 @@ fn convert_to_image_list(data: String) -> Vec<String> {
 /**
  * 获取随机 5 张壁纸
  */
-fn get_random_images(image_list: Vec<String>) -> Vec<String> {
+fn get_random_images(image_list: Vec<ImageData>) -> Vec<ImageData> {
     let mut rng = rand::thread_rng();
-    let mut random_images: Vec<String> = Vec::new();
+    let mut random_images: Vec<ImageData> = Vec::new();
+    println!("image_list: {:?}", image_list);
     for _ in 0..5 {
         let random_index = rng.gen_range(0..image_list.len());
         let random_image = image_list[random_index].clone();
         random_images.push(random_image);
     }
+    println!("random_images: {:?}", random_images);
     random_images
 }
 
@@ -86,7 +108,7 @@ fn get_random_images(image_list: Vec<String>) -> Vec<String> {
  * Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
  */
 #[tauri::command]
-fn get_data() -> Vec<String> {
+fn get_data() -> Vec<ImageData> {
     let data = get_wallpaper_data().unwrap();
     let image_list = convert_to_image_list(data);
     get_random_images(image_list)

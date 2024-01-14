@@ -90,18 +90,6 @@ function App() {
         <button onClick={selectDirectory}>选择文件夹</button>
         <p>当前选择的文件夹：{directory}</p>
       </div>
-      <h2>本地文件：</h2>
-      <div className="local-row">
-        {localImgs?.map((img, i) => (
-          <img
-            src={img}
-            alt="localImg"
-            className="local-img"
-            key={i}
-            onClick={() => setBgImg(img)}
-          />
-        ))}
-      </div>
       <h2>网络图片（点击下载并设置）：</h2>
       <Button onClick={fetchData}>下载新的照片</Button>
       <div className="row">
@@ -113,6 +101,18 @@ function App() {
           >
             <img src={img} alt="img" className="item" />
           </div>
+        ))}
+      </div>
+      <h2>本地文件：</h2>
+      <div className="local-row">
+        {localImgs?.map((img, i) => (
+          <img
+            src={img}
+            alt="localImg"
+            className="local-img"
+            key={i}
+            onClick={() => setBgImg(img)}
+          />
         ))}
       </div>
     </div>

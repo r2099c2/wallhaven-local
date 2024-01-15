@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { convertFileSrc, invoke } from '@tauri-apps/api/tauri';
 import { dialog } from '@tauri-apps/api';
 import { message, Button } from 'antd';
+import cx from 'classnames';
 import './App.css';
 import { BaseDirectory, readDir } from '@tauri-apps/api/fs';
 
@@ -14,6 +15,7 @@ function App() {
   const [imgs, setImgs] = useState<ImageData[]>();
   const [localImgs, setLocalImgs] = useState<string[]>();
   const [directory, setDirectory] = useState<string>('');
+  const [selectedImg, setSelectedImg] = useState<string>('');
 
   const fetchData = async () => {
     const res = await invoke<Array<ImageData>>('get_data');
@@ -101,13 +103,26 @@ function App() {
       </Button>
       <div className="net-row">
         {imgs?.map((img, i) => (
-          <img
-            src={img.thumb}
-            alt="img"
-            key={i}
-            className="net-img"
-            onClick={() => loadAndSetWallpaper(img.path)}
-          />
+          <div
+            className={cx('net-cell', { selected: selectedImg === img.path })}
+            onClick={() => setSelectedImg(img.path)}
+          >
+            <img
+              src={img.thumb}
+              alt="img"
+              key={i}
+              className="net-img"
+              // onClick={() => loadAndSetWallpaper(img.path)}
+            />
+            {selectedImg === img.path && (
+              <div className="actions">
+                <Button onClick={() => loadAndSetWallpaper(img.path)}>
+                  下载并设置
+                </Button>
+                <Button onClick={() => setBgImg(img.path)}>仅下载</Button>
+              </div>
+            )}
+          </div>
         ))}
       </div>
       <h2>本地文件：</h2>

@@ -44,6 +44,20 @@ function App() {
     }
   };
 
+  /**
+   * 下载图片到文件夹
+   */
+  const downloadImage = async (imageUrl: string) => {
+    message.loading('下载中...', 0);
+    const res = await invoke('download_image', { imageUrl });
+    message.destroy();
+    if (res) {
+      message.info('下载成功');
+    } else {
+      message.error('下载失败');
+    }
+  };
+
   useEffect(() => {
     // 从本地获取缓存的文件夹路径
     invoke<string>('get_directory').then((res) => {
@@ -98,7 +112,12 @@ function App() {
         <p>当前选择的文件夹：{directory}</p>
       </div>
       <h2>网络图片（点击下载并设置）：</h2>
-      <Button className="download-btn" onClick={fetchData}>
+      <Button
+        type="primary"
+        size="large"
+        className="download-btn"
+        onClick={fetchData}
+      >
         下载新的照片
       </Button>
       <div className="net-row">
@@ -107,19 +126,15 @@ function App() {
             className={cx('net-cell', { selected: selectedImg === img.path })}
             onClick={() => setSelectedImg(img.path)}
           >
-            <img
-              src={img.thumb}
-              alt="img"
-              key={i}
-              className="net-img"
-              // onClick={() => loadAndSetWallpaper(img.path)}
-            />
+            <img src={img.thumb} alt="img" key={i} className="net-img" />
             {selectedImg === img.path && (
               <div className="actions">
                 <Button onClick={() => loadAndSetWallpaper(img.path)}>
                   下载并设置
                 </Button>
-                <Button onClick={() => setBgImg(img.path)}>仅下载</Button>
+                <Button type="primary" onClick={() => downloadImage(img.path)}>
+                  仅下载
+                </Button>
               </div>
             )}
           </div>

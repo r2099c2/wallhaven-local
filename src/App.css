@@ -17,6 +17,8 @@
 
 .download-btn {
   margin-bottom: 20px;
+  width: 50%;
+  margin: 10px auto;
 }
 
 .net-row {
@@ -35,6 +37,7 @@
   width: 100%;
   box-sizing: border-box;
   position: relative;
+  display: inline-flex;
 }
 
 .net-cell.selected {

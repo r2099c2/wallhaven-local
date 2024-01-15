@@ -122,6 +122,15 @@ fn get_data() -> Vec<ImageData> {
  */
 #[tauri::command]
 fn load_and_set_wallpaper(image_url: String) -> bool {
+    let filename = download_image(image_url);
+    set_wallpaper(filename)
+}
+
+/**
+ * 仅下载图片到文件夹
+ */
+#[tauri::command]
+fn download_image(image_url: String) -> String {
     println!("url: {}", image_url);
     let resp = reqwest::blocking::get(image_url.clone()).unwrap();
     let body = resp.bytes().unwrap();
@@ -137,7 +146,7 @@ fn load_and_set_wallpaper(image_url: String) -> bool {
     let mut file = std::fs::File::create(filename_clone).unwrap();
     std::io::copy(&mut body.as_ref(), &mut file).unwrap();
 
-    set_wallpaper(filename)
+    filename
 }
 
 /**
@@ -207,6 +216,7 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             get_data,
+            download_image,
             load_and_set_wallpaper,
             set_wallpaper,
             set_directory,

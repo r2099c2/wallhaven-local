@@ -1,0 +1,65 @@
+.container {
+  margin: 0;
+  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.download-btn {
+  margin-bottom: 20px;
+  width: 50%;
+  margin: 10px auto;
+}
+
+.net-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-row-gap: 20px;
+  grid-column-gap: 20px;
+  width: 100%;
+}
+
+.net-cell {
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-flex;
+}
+
+.net-cell.selected {
+  border: 2px solid #535bf2;
+}
+
+.net-cell.selected .actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.net-img {
+  width: 100%;
+}
+
+.local-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  width: 100%;
+}
+
+.local-img {
+  width: 100%;
+}
+
+h1 {
+  text-align: center;
+}

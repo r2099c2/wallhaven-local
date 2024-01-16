@@ -3,7 +3,7 @@ import { convertFileSrc, invoke } from '@tauri-apps/api/tauri';
 import { dialog } from '@tauri-apps/api';
 import { message, Button } from 'antd';
 import cx from 'classnames';
-import './App.css';
+import s from './App.module.css';
 import { BaseDirectory, readDir } from '@tauri-apps/api/fs';
 
 interface ImageData {
@@ -104,7 +104,7 @@ function App() {
   };
 
   return (
-    <div className="container">
+    <div className={s.container}>
       <h1>Wallpaper Gallery</h1>
       <div>
         {/* 选择文件夹 */}
@@ -115,20 +115,20 @@ function App() {
       <Button
         type="primary"
         size="large"
-        className="download-btn"
+        className={s.downloadBtn}
         onClick={fetchData}
       >
         下载新的照片
       </Button>
-      <div className="net-row">
+      <div className={s.netRow}>
         {imgs?.map((img, i) => (
           <div
-            className={cx('net-cell', { selected: selectedImg === img.path })}
+            className={cx(s.netCell, { selected: selectedImg === img.path })}
             onClick={() => setSelectedImg(img.path)}
           >
-            <img src={img.thumb} alt="img" key={i} className="net-img" />
+            <img src={img.thumb} alt="img" key={i} className={s.netImg} />
             {selectedImg === img.path && (
-              <div className="actions">
+              <div className={s.actions}>
                 <Button onClick={() => loadAndSetWallpaper(img.path)}>
                   下载并设置
                 </Button>
@@ -141,12 +141,12 @@ function App() {
         ))}
       </div>
       <h2>本地文件：</h2>
-      <div className="local-row">
+      <div className={s.localRow}>
         {localImgs?.map((img, i) => (
           <img
             src={img}
             alt="localImg"
-            className="local-img"
+            className={s.localImg}
             key={i}
             onClick={() => setBgImg(img)}
           />

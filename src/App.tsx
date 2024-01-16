@@ -123,7 +123,9 @@ function App() {
       <div className={s.netRow}>
         {imgs?.map((img, i) => (
           <div
-            className={cx(s.netCell, { selected: selectedImg === img.path })}
+            className={cx(s.netCell, {
+              [s.selected]: selectedImg === img.path,
+            })}
             onClick={() => setSelectedImg(img.path)}
           >
             <img src={img.thumb} alt="img" key={i} className={s.netImg} />

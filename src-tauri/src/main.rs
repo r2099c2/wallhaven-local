@@ -6,6 +6,7 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Read, Write},
+    string,
     sync::{Arc, Mutex},
 };
 
@@ -34,7 +35,7 @@ struct WallhavenParams {
 /**
  * 获取壁纸数据
  */
-fn get_wallpaper_data() -> Result<String, String> {
+fn get_wallpaper_data(atleast: String) -> Result<String, String> {
     let q = WallhavenParams {
         sorting: "toplist".to_string(),
         order: "desc".to_string(),
@@ -43,10 +44,11 @@ fn get_wallpaper_data() -> Result<String, String> {
         categories: "111".to_string(),
         purity: 100,
         topRange: "3d".to_owned(),
-        atleast: "1920x1080".to_string(),
+        atleast,
         ratios: "16x9".to_string(),
     };
 
+    // "1920x1080".to_string()
     let url = "https://wallhaven.cc/api/v1/search?".to_owned()
         + serde_qs::to_string(&q).unwrap().as_str();
     let resp = reqwest::blocking::get(url).unwrap();
@@ -107,8 +109,8 @@ fn get_random_images(image_list: Vec<ImageData>) -> Vec<ImageData> {
  * Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
  */
 #[tauri::command]
-fn get_data() -> Vec<ImageData> {
-    let data = get_wallpaper_data().unwrap();
+fn get_data(atleast: String) -> Vec<ImageData> {
+    let data = get_wallpaper_data(atleast).unwrap();
     let image_list = convert_to_image_list(data);
     get_random_images(image_list)
 }

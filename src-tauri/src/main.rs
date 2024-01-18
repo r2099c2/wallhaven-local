@@ -6,7 +6,6 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Read, Write},
-    string,
     sync::{Arc, Mutex},
 };
 
@@ -30,12 +29,13 @@ struct WallhavenParams {
     atleast: String,
     ratios: String,
     topRange: String,
+    apikey: String,
 }
 
 /**
  * 获取壁纸数据
  */
-fn get_wallpaper_data(atleast: String) -> Result<String, String> {
+fn get_wallpaper_data(atleast: String, apikey: String) -> Result<String, String> {
     let q = WallhavenParams {
         sorting: "toplist".to_string(),
         order: "desc".to_string(),
@@ -46,11 +46,12 @@ fn get_wallpaper_data(atleast: String) -> Result<String, String> {
         topRange: "3d".to_owned(),
         atleast,
         ratios: "16x9".to_string(),
+        apikey,
     };
 
-    // "1920x1080".to_string()
     let url = "https://wallhaven.cc/api/v1/search?".to_owned()
         + serde_qs::to_string(&q).unwrap().as_str();
+    println!("url: {}", url);
     let resp = reqwest::blocking::get(url).unwrap();
     let body = resp.text().unwrap();
     Ok(body)
@@ -109,8 +110,8 @@ fn get_random_images(image_list: Vec<ImageData>) -> Vec<ImageData> {
  * Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
  */
 #[tauri::command]
-fn get_data(atleast: String) -> Vec<ImageData> {
-    let data = get_wallpaper_data(atleast).unwrap();
+fn get_data(atleast: String, apikey: String) -> Vec<ImageData> {
+    let data = get_wallpaper_data(atleast, apikey).unwrap();
     let image_list = convert_to_image_list(data);
     get_random_images(image_list)
 }

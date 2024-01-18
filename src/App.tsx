@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { convertFileSrc, invoke } from '@tauri-apps/api/tauri';
 import { dialog } from '@tauri-apps/api';
-import { message, Button, Select } from 'antd';
+import { message, Button, Select, Input } from 'antd';
 import cx from 'classnames';
 import s from './App.module.css';
 import { BaseDirectory, readDir } from '@tauri-apps/api/fs';
@@ -17,10 +17,12 @@ function App() {
   const [directory, setDirectory] = useState<string>('');
   const [selectedImg, setSelectedImg] = useState<string>('');
   const [atleast, setAtleast] = useState<String>('1920x1080');
+  const [apiKey, setApiKey] = useState<String>('');
 
   const fetchData = async () => {
     const res = await invoke<Array<ImageData>>('get_data', {
-      atleast: atleast,
+      atleast,
+      apikey: apiKey,
     });
     setImgs(res);
   };
@@ -113,21 +115,27 @@ function App() {
   return (
     <div className={s.container}>
       <h1>Wallpaper Gallery</h1>
-      <div>
+      <div className={s.chooseBtnWrapper}>
         {/* 选择文件夹 */}
-        <button onClick={selectDirectory}>选择文件夹</button>
+        <Button onClick={selectDirectory}>选择文件夹</Button>
         <p>当前选择的文件夹：{directory}</p>
       </div>
       <h2>网络图片（点击下载并设置）：</h2>
-      <Select
-        defaultValue="1920x1080"
-        style={{ width: 120 }}
-        onChange={onResolutionChange}
-        options={[
-          { value: '1920x1080', label: '1920x1080' },
-          { value: '3440x1440', label: '3440x1440' },
-        ]}
-      />
+      <div className={s.selectorWrapper}>
+        <Select
+          defaultValue="1920x1080"
+          style={{ width: 120 }}
+          onChange={onResolutionChange}
+          options={[
+            { value: '1920x1080', label: '1920x1080' },
+            { value: '3440x1440', label: '3440x1440' },
+          ]}
+        />
+        <Input
+          placeholder="api key"
+          onChange={(e) => setApiKey(e.currentTarget.value)}
+        />
+      </div>
       <Button
         type="primary"
         size="large"

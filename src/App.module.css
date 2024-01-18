@@ -7,6 +7,16 @@
   text-align: center;
 }
 
+.choose-btn-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > p {
+    margin-left: 10px;
+  }
+}
+
 .download-btn {
   margin-bottom: 20px;
   width: 50%;
@@ -42,6 +52,12 @@
       justify-content: space-around;
     }
   }
+}
+
+.selector-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .net-img {

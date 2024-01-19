@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use lazy_static::lazy_static;
-use rand::Rng;
+use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Read, Write},
@@ -95,9 +95,10 @@ fn convert_to_image_list(data: String) -> Vec<ImageData> {
 fn get_random_images(image_list: Vec<ImageData>) -> Vec<ImageData> {
     let mut rng = rand::thread_rng();
     let mut random_images: Vec<ImageData> = Vec::new();
-    println!("image_list: {:?}", image_list);
-    for _ in 0..5 {
-        let random_index = rng.gen_range(0..image_list.len());
+    let mut indices: Vec<usize> = (0..image_list.len()).collect();
+    indices.shuffle(&mut rng);
+    for i in 0..5 {
+        let random_index = indices[i];
         let random_image = image_list[random_index].clone();
         random_images.push(random_image);
     }

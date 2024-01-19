@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { convertFileSrc, invoke } from '@tauri-apps/api/tauri';
 import { dialog } from '@tauri-apps/api';
-import { message, Button, Select, Input } from 'antd';
+import { message, Button, Select, Input, Tabs } from 'antd';
+import type { TabsProps } from 'antd';
 import cx from 'classnames';
 import s from './App.module.css';
-import { BaseDirectory, readDir } from '@tauri-apps/api/fs';
+import { readDir } from '@tauri-apps/api/fs';
 
 interface ImageData {
   path: string;
@@ -114,14 +115,25 @@ function App() {
     setAtleast(value);
   };
 
-  return (
-    <div className={s.container}>
-      <h1>Wallpaper Gallery</h1>
-      <div className={s.chooseBtnWrapper}>
-        {/* 选择文件夹 */}
-        <Button onClick={selectDirectory}>选择文件夹</Button>
-        <p>当前选择的文件夹：{directory}</p>
+  const LocalImageTab = (
+    <>
+      <h2>本地文件：</h2>
+      <div className={s.localRow}>
+        {localImgs?.map((img, i) => (
+          <img
+            src={img}
+            alt="localImg"
+            className={s.localImg}
+            key={i}
+            onClick={() => setBgImg(img)}
+          />
+        ))}
       </div>
+    </>
+  );
+
+  const NetImageTab = (
+    <>
       <h2>网络图片（点击下载并设置）：</h2>
       <div className={s.selectorWrapper}>
         <Select
@@ -168,18 +180,31 @@ function App() {
           </div>
         ))}
       </div>
-      <h2>本地文件：</h2>
-      <div className={s.localRow}>
-        {localImgs?.map((img, i) => (
-          <img
-            src={img}
-            alt="localImg"
-            className={s.localImg}
-            key={i}
-            onClick={() => setBgImg(img)}
-          />
-        ))}
+    </>
+  );
+
+  const tabItems: TabsProps['items'] = [
+    {
+      key: 'local',
+      label: '本地图片',
+      children: LocalImageTab,
+    },
+    {
+      key: 'net',
+      label: '网络加载图片',
+      children: NetImageTab,
+    },
+  ];
+
+  return (
+    <div className={s.container}>
+      <h1>Wallpaper Gallery</h1>
+      <div className={s.chooseBtnWrapper}>
+        {/* 选择文件夹 */}
+        <Button onClick={selectDirectory}>选择文件夹</Button>
+        <p>当前选择的文件夹：{directory}</p>
       </div>
+      <Tabs defaultActiveKey="local" items={tabItems} />
     </div>
   );
 }

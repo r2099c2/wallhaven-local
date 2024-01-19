@@ -58,6 +58,8 @@ function App() {
     message.destroy();
     if (res) {
       message.info('下载成功');
+      // 刷新文件夹
+      loadCurrentImages();
     } else {
       message.error('下载失败');
     }
@@ -75,12 +77,12 @@ function App() {
   }, []);
 
   // 从文件夹中遍历图片文件
-  const loadCurrentImages = async (directory: string) => {
-    if (!directory) {
+  const loadCurrentImages = async (directoryParam: string = directory) => {
+    if (!directoryParam) {
       return;
     }
 
-    readDir('wallpaper', { dir: BaseDirectory.Picture }).then((res) => {
+    readDir(directoryParam).then((res) => {
       const imgs = res
         .filter(
           (item) => item.name?.endsWith('.jpg') || item.name?.endsWith('.png')

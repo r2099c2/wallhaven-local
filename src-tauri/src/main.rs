@@ -104,7 +104,6 @@ fn get_random_images(image_list: Vec<ImageData>, len: usize) -> Vec<ImageData> {
         let random_image = image_list[random_index].clone();
         random_images.push(random_image);
     }
-    println!("random_images: {:?}", random_images);
     random_images
 }
 

@@ -40,9 +40,10 @@ fn get_wallpaper_data(
     atleast: String,
     apikey: String,
     top_range: String,
+    sorting: String,
 ) -> Result<String, String> {
     let q = WallhavenParams {
-        sorting: "toplist".to_string(),
+        sorting,
         order: "desc".to_string(),
         seed: 1,
         page: 1,
@@ -116,8 +117,14 @@ fn get_random_images(image_list: Vec<ImageData>, len: usize) -> Vec<ImageData> {
  * Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
  */
 #[tauri::command]
-fn get_data(atleast: String, apikey: String, len: usize, top_range: String) -> Vec<ImageData> {
-    let data = get_wallpaper_data(atleast, apikey, top_range).unwrap();
+fn get_data(
+    atleast: String,
+    apikey: String,
+    len: usize,
+    top_range: String,
+    sorting: String,
+) -> Vec<ImageData> {
+    let data = get_wallpaper_data(atleast, apikey, top_range, sorting).unwrap();
     let image_list = convert_to_image_list(data);
     get_random_images(image_list, len)
 }

@@ -27,6 +27,17 @@ const enum TopRange {
   oneYear = '1y',
 }
 
+/**
+ * relevance, random, views, favorites, toplist
+ */
+const enum Sorting {
+  relevance = 'relevance',
+  random = 'random',
+  views = 'views',
+  favorites = 'favorites',
+  toplist = 'toplist',
+}
+
 function App() {
   const [imgs, setImgs] = useState<ImageData[]>();
   const [localImgs, setLocalImgs] = useState<string[]>();
@@ -36,6 +47,7 @@ function App() {
   const [apiKey, setApiKey] = useState<String>('');
   const [netLen, setNetLen] = useState<number>(5);
   const [topRange, setTopRange] = useState<TopRange>(TopRange.oneMonth);
+  const [sorting, setSorting] = useState<Sorting>(Sorting.toplist);
 
   const fetchData = async () => {
     message.loading('加载中...', 0);
@@ -44,6 +56,7 @@ function App() {
       apikey: apiKey,
       len: netLen,
       topRange,
+      sorting,
     });
     message.destroy();
     setImgs(res);
@@ -188,6 +201,18 @@ function App() {
             { value: TopRange.threeMonth, label: '3月' },
             { value: TopRange.sixMonth, label: '6月' },
             { value: TopRange.oneYear, label: '1年' },
+          ]}
+        />
+        <Select
+          defaultValue={Sorting.toplist}
+          style={{ width: 120 }}
+          onChange={(value) => setSorting(value as Sorting)}
+          options={[
+            { value: Sorting.relevance, label: '相关度' },
+            { value: Sorting.random, label: '随机' },
+            { value: Sorting.views, label: '浏览量' },
+            { value: Sorting.favorites, label: '收藏量' },
+            { value: Sorting.toplist, label: '排行榜' },
           ]}
         />
       </div>

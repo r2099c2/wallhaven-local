@@ -45,7 +45,7 @@ function App() {
   const [selectedImg, setSelectedImg] = useState<string>('');
   const [atleast, setAtleast] = useState<String>('1920x1080');
   const [apiKey, setApiKey] = useState<String>('');
-  const [netLen, setNetLen] = useState<number>(5);
+  const [netLen, setNetLen] = useState<number>(20);
   const [topRange, setTopRange] = useState<TopRange>(TopRange.oneMonth);
   const [sorting, setSorting] = useState<Sorting>(Sorting.toplist);
 
@@ -183,11 +183,17 @@ function App() {
           placeholder="api key"
           onChange={(e) => setApiKey(e.currentTarget.value)}
         />
-        <Input
-          placeholder="图片数量"
-          type="number"
-          value={netLen}
-          onChange={(e) => setNetLen(Number(e.currentTarget.value))}
+        <Select
+          defaultValue={netLen}
+          style={{ width: 120 }}
+          onChange={(value) => setNetLen(Number(value))}
+          options={[
+            { value: 5, label: '5' },
+            { value: 10, label: '10' },
+            { value: 20, label: '20' },
+            { value: 50, label: '50' },
+            { value: 100, label: '100' },
+          ]}
         />
         <Select
           defaultValue={TopRange.oneMonth}

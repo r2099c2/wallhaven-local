@@ -1,6 +1,8 @@
 # Intro
 
-Learn Rust.
+Learn Rust & Tauri.
+
+管理本地壁纸，以及从 wallhaven 下载壁纸。
 
 ## Tauri + React + Typescript
 

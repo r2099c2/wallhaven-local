@@ -163,7 +163,7 @@ function App() {
         className={s.downloadBtn}
         onClick={fetchData}
       >
-        下载新的照片
+        {imgs?.length ? '重新加载照片' : '加载照片'}
       </Button>
       <div className={s.netRow}>
         {imgs?.map((img, i) => (

@@ -48,6 +48,7 @@ function App() {
   const [netLen, setNetLen] = useState<number>(20);
   const [topRange, setTopRange] = useState<TopRange>(TopRange.oneMonth);
   const [sorting, setSorting] = useState<Sorting>(Sorting.toplist);
+  const [page, setPage] = useState<number>(1);
 
   const fetchData = async () => {
     message.loading('加载中...', 0);
@@ -57,6 +58,7 @@ function App() {
       len: netLen,
       topRange,
       sorting,
+      page,
     });
     message.destroy();
     setImgs(res);
@@ -188,11 +190,10 @@ function App() {
           style={{ width: 120 }}
           onChange={(value) => setNetLen(Number(value))}
           options={[
-            { value: 5, label: '5' },
-            { value: 10, label: '10' },
-            { value: 20, label: '20' },
-            { value: 50, label: '50' },
-            { value: 100, label: '100' },
+            { value: 5, label: '5张' },
+            { value: 10, label: '10张' },
+            { value: 20, label: '20张' },
+            { value: 50, label: '50张' },
           ]}
         />
         <Select
@@ -220,6 +221,17 @@ function App() {
             { value: Sorting.favorites, label: '收藏量' },
             { value: Sorting.toplist, label: '排行榜' },
           ]}
+        />
+        <Select
+          defaultValue={page}
+          style={{ width: 120 }}
+          onChange={(value) => setPage(Number(value))}
+          options={Array(20)
+            .fill(0)
+            .map((_, i) => ({
+              value: i + 1,
+              label: String(i + 1) + '页',
+            }))}
         />
       </div>
       <Button

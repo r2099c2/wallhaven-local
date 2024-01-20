@@ -41,12 +41,13 @@ fn get_wallpaper_data(
     apikey: String,
     top_range: String,
     sorting: String,
+    page: i32,
 ) -> Result<String, String> {
     let q = WallhavenParams {
         sorting,
         order: "desc".to_string(),
         seed: 1,
-        page: 1,
+        page,
         categories: "111".to_string(),
         purity: 100,
         topRange: top_range,
@@ -123,8 +124,9 @@ fn get_data(
     len: usize,
     top_range: String,
     sorting: String,
+    page: i32,
 ) -> Vec<ImageData> {
-    let data = get_wallpaper_data(atleast, apikey, top_range, sorting).unwrap();
+    let data = get_wallpaper_data(atleast, apikey, top_range, sorting, page).unwrap();
     let image_list = convert_to_image_list(data);
     get_random_images(image_list, len)
 }

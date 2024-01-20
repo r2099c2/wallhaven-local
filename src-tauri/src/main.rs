@@ -5,6 +5,7 @@ use lazy_static::lazy_static;
 use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
 use std::{
+    cmp::max,
     io::{Read, Write},
     sync::{Arc, Mutex},
 };
@@ -92,12 +93,13 @@ fn convert_to_image_list(data: String) -> Vec<ImageData> {
 /**
  * 获取随机 5 张不重复的壁纸
  */
-fn get_random_images(image_list: Vec<ImageData>) -> Vec<ImageData> {
+fn get_random_images(image_list: Vec<ImageData>, len: usize) -> Vec<ImageData> {
     let mut rng = rand::thread_rng();
     let mut random_images: Vec<ImageData> = Vec::new();
-    let mut indices: Vec<usize> = (0..image_list.len()).collect();
+    let max_length = max(image_list.len(), len);
+    let mut indices: Vec<usize> = (0..max_length).collect();
     indices.shuffle(&mut rng);
-    for i in 0..5 {
+    for i in 0..len {
         let random_index = indices[i];
         let random_image = image_list[random_index].clone();
         random_images.push(random_image);
@@ -111,10 +113,10 @@ fn get_random_images(image_list: Vec<ImageData>) -> Vec<ImageData> {
  * Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
  */
 #[tauri::command]
-fn get_data(atleast: String, apikey: String) -> Vec<ImageData> {
+fn get_data(atleast: String, apikey: String, len: usize) -> Vec<ImageData> {
     let data = get_wallpaper_data(atleast, apikey).unwrap();
     let image_list = convert_to_image_list(data);
-    get_random_images(image_list)
+    get_random_images(image_list, len)
 }
 
 /**

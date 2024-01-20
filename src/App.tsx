@@ -19,11 +19,13 @@ function App() {
   const [selectedImg, setSelectedImg] = useState<string>('');
   const [atleast, setAtleast] = useState<String>('1920x1080');
   const [apiKey, setApiKey] = useState<String>('');
+  const [netLen, setNetLen] = useState<number>(5);
 
   const fetchData = async () => {
     const res = await invoke<Array<ImageData>>('get_data', {
       atleast,
       apikey: apiKey,
+      len: netLen,
     });
     setImgs(res);
   };
@@ -148,6 +150,11 @@ function App() {
         <Input
           placeholder="api key"
           onChange={(e) => setApiKey(e.currentTarget.value)}
+        />
+        <Input
+          placeholder="图片数量"
+          type="number"
+          onChange={(e) => setNetLen(Number(e.currentTarget.value))}
         />
       </div>
       <Button

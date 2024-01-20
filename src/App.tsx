@@ -22,11 +22,13 @@ function App() {
   const [netLen, setNetLen] = useState<number>(5);
 
   const fetchData = async () => {
+    message.loading('加载中...', 0);
     const res = await invoke<Array<ImageData>>('get_data', {
       atleast,
       apikey: apiKey,
       len: netLen,
     });
+    message.destroy();
     setImgs(res);
   };
 
@@ -154,6 +156,7 @@ function App() {
         <Input
           placeholder="图片数量"
           type="number"
+          value={netLen}
           onChange={(e) => setNetLen(Number(e.currentTarget.value))}
         />
       </div>

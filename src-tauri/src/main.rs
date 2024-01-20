@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use lazy_static::lazy_static;
-use rand::{seq::SliceRandom, Rng};
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 use std::{
     cmp::max,

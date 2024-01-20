@@ -12,6 +12,21 @@ interface ImageData {
   thumb: string;
 }
 
+/**
+ * 1d, 3d, 1w,
+1M*
+, 3M, 6M, 1y
+ */
+const enum TopRange {
+  oneDay = '1d',
+  threeDay = '3d',
+  oneWeek = '1w',
+  oneMonth = '1M',
+  threeMonth = '3M',
+  sixMonth = '6M',
+  oneYear = '1y',
+}
+
 function App() {
   const [imgs, setImgs] = useState<ImageData[]>();
   const [localImgs, setLocalImgs] = useState<string[]>();
@@ -20,6 +35,7 @@ function App() {
   const [atleast, setAtleast] = useState<String>('1920x1080');
   const [apiKey, setApiKey] = useState<String>('');
   const [netLen, setNetLen] = useState<number>(5);
+  const [topRange, setTopRange] = useState<TopRange>(TopRange.oneMonth);
 
   const fetchData = async () => {
     message.loading('加载中...', 0);
@@ -27,6 +43,7 @@ function App() {
       atleast,
       apikey: apiKey,
       len: netLen,
+      topRange,
     });
     message.destroy();
     setImgs(res);
@@ -158,6 +175,20 @@ function App() {
           type="number"
           value={netLen}
           onChange={(e) => setNetLen(Number(e.currentTarget.value))}
+        />
+        <Select
+          defaultValue={TopRange.oneMonth}
+          style={{ width: 120 }}
+          onChange={(value) => setTopRange(value as TopRange)}
+          options={[
+            { value: TopRange.oneDay, label: '1天' },
+            { value: TopRange.threeDay, label: '3天' },
+            { value: TopRange.oneWeek, label: '1周' },
+            { value: TopRange.oneMonth, label: '1月' },
+            { value: TopRange.threeMonth, label: '3月' },
+            { value: TopRange.sixMonth, label: '6月' },
+            { value: TopRange.oneYear, label: '1年' },
+          ]}
         />
       </div>
       <Button

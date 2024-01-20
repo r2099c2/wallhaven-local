@@ -36,7 +36,11 @@ struct WallhavenParams {
 /**
  * 获取壁纸数据
  */
-fn get_wallpaper_data(atleast: String, apikey: String) -> Result<String, String> {
+fn get_wallpaper_data(
+    atleast: String,
+    apikey: String,
+    top_range: String,
+) -> Result<String, String> {
     let q = WallhavenParams {
         sorting: "toplist".to_string(),
         order: "desc".to_string(),
@@ -44,7 +48,7 @@ fn get_wallpaper_data(atleast: String, apikey: String) -> Result<String, String>
         page: 1,
         categories: "111".to_string(),
         purity: 100,
-        topRange: "3d".to_owned(),
+        topRange: top_range,
         atleast,
         ratios: "16x9".to_string(),
         apikey,
@@ -112,8 +116,8 @@ fn get_random_images(image_list: Vec<ImageData>, len: usize) -> Vec<ImageData> {
  * Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
  */
 #[tauri::command]
-fn get_data(atleast: String, apikey: String, len: usize) -> Vec<ImageData> {
-    let data = get_wallpaper_data(atleast, apikey).unwrap();
+fn get_data(atleast: String, apikey: String, len: usize, top_range: String) -> Vec<ImageData> {
+    let data = get_wallpaper_data(atleast, apikey, top_range).unwrap();
     let image_list = convert_to_image_list(data);
     get_random_images(image_list, len)
 }
